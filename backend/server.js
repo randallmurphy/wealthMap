@@ -1,4 +1,4 @@
-const app = require('/app');
+const app = require('./App');  // <-- fixed relative path here
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -9,13 +9,11 @@ const processRecurringItems = require('./jobs/recurringJob');
 
 processRecurringItems();
 
-
-mongoose.connect(process.env.MONGO_URI, {
-   
+mongoose.connect(MONGO_URI, {
+    // options if any
 })
 .then(() => {
     console.log('MongoDB Connected');
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
 })
 .catch(err => console.log(err));
