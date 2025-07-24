@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Button, Paper, Typography } from '@mui/material';
-import { addExpense } from '../services/wealthService';
+addExpense
 import { toast } from 'react-toastify';
+import { addExpense } from '../services/wealthServise';
 
 const ExpenseForm = () => {
   const [form, setForm] = useState({ name: '', amount: '' });

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from './hooks/useAuth';
 
 const LogoutButton = () => {
   const { logout } = useAuth();

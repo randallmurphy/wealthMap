@@ -2,7 +2,9 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Avatar, Tooltip } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
-import { useAuth } from '../hooks/useAuth';
+
+import DarkModeToggle from "./DarkModeToggle";
+import { useAuth } from './hooks/useAuth';
 
 const NavBar = () => {
   const { user } = useAuth();
@@ -29,9 +31,9 @@ const NavBar = () => {
           {user ? (
             <>
               <Tooltip title={`Logged in as ${user.name}`}>
-                <Avatar sx={{ bgcolor: '#FFD700', color: '#1e1e2f' }}>
+                {/* <Avatar sx={{ bgcolor: '#FFD700', color: '#1e1e2f' }}>
                   {user.name[0].toUpperCase()}
-                </Avatar>
+                </Avatar> */}
               </Tooltip>
               <Typography
                 variant="subtitle1"
@@ -52,6 +54,7 @@ const NavBar = () => {
             </>
           )}
         </Box>
+         <DarkModeToggle />
       </Toolbar>
     </AppBar>
   );

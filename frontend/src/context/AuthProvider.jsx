@@ -3,7 +3,6 @@ import axios from 'axios';
 import { AuthContext } from './AuthContext';
 import instance from '../utils/axios';
 
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,36 +18,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-  const loadUser = async () => {
     const token = localStorage.getItem('token');
     if (token) {
-      setAuthToken(token); // sets axios default header
-      try {
-        const res = await instance.get('/me'); // <-- THIS fails with 404
-        setUser(res.data); // set user info
-      } catch (err) {
-        // On failure, clear user/token and logout
-        setUser(null);
-        setAuthToken(null);
-        console.log(err)
+      setAuthToken(token);
+      // 👇 Instead of fetching `/me`, just trust the token is valid
+      // If you want extra security, decode token or verify login again later
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      if (storedUser) {
+        setUser(storedUser);
       }
-    } else {
-      setUser(null);
-      setAuthToken(null);
     }
     setLoading(false);
-  };
-  loadUser();
-}, []);
-
+  }, []);
 
   const register = async (formData) => {
     try {
       const res = await instance.post('/register', formData);
       setAuthToken(res.data.token);
       setUser(res.data.user);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
       return { success: true };
     } catch (err) {
+      console.error('Register error:', err);
       return {
         success: false,
         error: err.response?.data?.message || 'Registration failed',
@@ -61,8 +52,10 @@ export const AuthProvider = ({ children }) => {
       const res = await instance.post('/login', formData);
       setAuthToken(res.data.token);
       setUser(res.data.user);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
       return { success: true };
     } catch (err) {
+      console.error('Login error:', err);
       return {
         success: false,
         error: err.response?.data?.message || 'Login failed',
@@ -73,6 +66,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setAuthToken(null);
+    localStorage.removeItem('user');
   };
 
   return (

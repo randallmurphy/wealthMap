@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from './hooks/useAuth';
 import { TextField, Button, Box, Typography, Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const { register } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -20,8 +22,14 @@ const Register = () => {
     const res = await register(formData);
     setLoading(false);
 
-    if (!res.success) setError(res.error);
-    else setSuccessMsg('Registration successful! You can now login.');
+    if (!res.success) {
+      setError(res.error);
+    } else {
+      setSuccessMsg('Registration successful! Redirecting...');
+      setTimeout(() => {
+        navigate('/login'); // redirect to login page
+      }, 1500);
+    }
   };
 
   return (

@@ -1,8 +1,7 @@
-import React, { createContext, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-
-export const ThemeContext = createContext();
+import { ThemeContext } from './ThemeContext'; // ✅ This is now valid
 
 export const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);

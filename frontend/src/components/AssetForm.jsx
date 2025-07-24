@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Paper, Typography } from '@mui/material';
-import { addAsset } from '../services/wealthService';
+import { addAsset } from '../services/wealthServise';
 import { toast } from 'react-toastify';
 
 const AssetForm = () => {

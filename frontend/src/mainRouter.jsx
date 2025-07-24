@@ -1,21 +1,22 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import NavBar from './components/NavBar';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
+import Items from './pages/Items';
+import Recurring from './pages/Recurring';
+import Analytics from './pages/Analytics';
+
 import ProtectedRoute from './components/ProtectedRoute';
 
-const AppRoutes = () => (
-  <Router>
+const MainRouter = () => (
+  <>
     <NavBar />
-
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
-      {/* Protect dashboard behind auth */}
       <Route
         path="/dashboard"
         element={
@@ -24,14 +25,34 @@ const AppRoutes = () => (
           </ProtectedRoute>
         }
       />
-
-      {/* Redirect root to dashboard or login */}
       <Route
-        path="/"
-        element={<Navigate to="/dashboard" replace />}
+        path="/dashboard/items"
+        element={
+          <ProtectedRoute>
+            <Items />
+          </ProtectedRoute>
+        }
       />
+      <Route
+        path="/dashboard/recurring"
+        element={
+          <ProtectedRoute>
+            <Recurring />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/analytics"
+        element={
+          <ProtectedRoute>
+            <Analytics />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-  </Router>
+  </>
 );
 
-export default AppRoutes;
+export default MainRouter;
