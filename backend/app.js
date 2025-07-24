@@ -1,31 +1,39 @@
+// app.js
 const express = require('express');
 const cors = require('cors');
-
 const morgan = require('morgan');
 require('dotenv').config();
-
+const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/user/userRouter');
+const itemRoutes = require('./routes/items/itemRoutes');
 
 const app = express();
 
-// 🧠 Middlewares
-             // Security headers
-app.use(cors());                // Cross-origin access
-app.use(express.json());        // Parse JSON
-app.use(morgan('dev'));         // Logging
+const allowedOrigins = ['http://localhost:5173'];
 
-// 📦 Routes
-app.use('/api/users', userRouter);
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+}));
 
-// 🔧 Default route
+app.use(express.json());
+app.use(cookieParser());
+app.use(morgan('dev'));
+
+// Mount routes
+app.use('/api/auth', userRouter);
+
+app.use('/api/items', itemRoutes);
+
+// Health check
 app.get('/', (req, res) => {
-  res.send('💸 WealthMap API running strong...');
+    res.send('💸 WealthMap API running strong...');
 });
 
-// 🛑 Global error handler
+// Error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Server Error', message: err.message });
+    console.error(err.stack);
+    res.status(500).json({ error: 'Server Error', message: err.message });
 });
 
 module.exports = app;

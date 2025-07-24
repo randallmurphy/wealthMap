@@ -4,12 +4,9 @@ const itemSchema = new mongoose.Schema({
   name: { type: String, required: true },
   category: { type: String, required: true },
   amount: { type: Number, required: true },
-  recurring: {
-    isRecurring: { type: Boolean, default: false },
-    frequency: { type: String, enum: ['daily', 'weekly', 'monthly', 'yearly'], default: 'monthly' },
-    nextDate: { type: Date }, // when to auto-trigger next
-  },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-}, { timestamps: true });
+  recurring: { type: Boolean, default: false },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // if you have user auth
+  createdAt: { type: Date, default: Date.now }
+});
 
 module.exports = mongoose.model('Item', itemSchema);

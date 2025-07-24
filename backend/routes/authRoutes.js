@@ -8,6 +8,12 @@ const authMiddleware = require('../middleware/auth');
 // Register new user
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
+
+  // Basic validation
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Please provide name, email, and password' });
+  }
+
   try {
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: 'User already exists' });
@@ -24,6 +30,7 @@ router.post('/register', async (req, res) => {
 
     res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
   } catch (err) {
+    console.error('Register error:', err);
     res.status(500).json({ message: 'Server error during registration' });
   }
 });
@@ -31,6 +38,12 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
+  // Basic validation
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Please provide email and password' });
+  }
+
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
@@ -43,6 +56,7 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).json({ message: 'Server error during login' });
   }
 });
@@ -51,8 +65,10 @@ router.post('/login', async (req, res) => {
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (err) {
+    console.error('Get user profile error:', err);
     res.status(500).json({ message: 'Server error fetching user' });
   }
 });
