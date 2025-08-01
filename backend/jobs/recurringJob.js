@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const mongoose = require('mongoose');
-const Item = require('../models/item');
+const Item = require('../models/Item');
 
 // Helper: Add interval based on frequency
 function addFrequency(date, frequency) {
