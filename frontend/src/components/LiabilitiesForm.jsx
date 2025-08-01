@@ -1,75 +1,49 @@
-import React, { useState } from "react";
-import { TextField, Button, Paper, Typography } from "@mui/material";
+// ===========================
+// frontend/components/LiabilitiesForm.jsx
+// ===========================
+import React, { useState } from 'react';
+import axios from 'axios';
+import { TextField, Button, Box } from '@mui/material';
 
-const LiabilityForm = ({ onAdd }) => {
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [description, setDescription] = useState("");
+const LiabilitiesForm = () => {
+  const [name, setName] = useState('');
+  const [amount, setAmount] = useState('');
+  const [date, setDate] = useState('');
+  const [description, setDescription] = useState('');
+  const [notes, setNotes] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !amount) return; // keep it solid with simple validation
-
-    onAdd({ name, amount: Number(amount), description });
-    // reset fields after submit
-    setName("");
-    setAmount("");
-    setDescription("");
+    try {
+      const res = await axios.post('http://localhost:5000/api/liabilities', {
+        name,
+        amount: parseFloat(amount),
+        date,
+        description,
+        notes,
+      });
+      console.log('✅ Liability Added:', res.data);
+      setName('');
+      setAmount('');
+      setDate('');
+      setDescription('');
+      setNotes('');
+    } catch (err) {
+      console.error('❌ Error:', err.response?.data || err.message);
+      alert('Failed to add liability.');
+    }
   };
 
   return (
-    <Paper sx={{ p: 3, mb: 3, bgcolor: "#1e1e2f", color: "#fff", boxShadow: '0 0 15px #FFD700', borderRadius: 3 }}>
-      <Typography variant="h6" sx={{ mb: 2, color: "#FFD700", fontWeight: "bold", textAlign: "center" }}>
-        Add New Liability
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Liability Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          fullWidth
-          required
-          margin="normal"
-          sx={{ input: { color: "#fff" }, label: { color: "#FFD700" } }}
-          autoFocus
-        />
-        <TextField
-          label="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          fullWidth
-          required
-          type="number"
-          margin="normal"
-          sx={{ input: { color: "#fff" }, label: { color: "#FFD700" } }}
-        />
-        <TextField
-          label="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          fullWidth
-          multiline
-          rows={2}
-          margin="normal"
-          sx={{ input: { color: "#fff" }, label: { color: "#FFD700" } }}
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 2,
-            backgroundColor: "#FFD700",
-            color: "#000",
-            fontWeight: "bold",
-            "&:hover": { backgroundColor: "#e6c200" },
-          }}
-        >
-          Add Liability
-        </Button>
-      </form>
-    </Paper>
+    <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2}>
+      <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+      <TextField label="Amount" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+      <TextField label="Date" type="date" value={date} onChange={(e) => setDate(e.target.value)} InputLabelProps={{ shrink: true }} />
+      <TextField label="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+      <TextField label="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
+      <Button type="submit" variant="contained" color="primary">Add Liability</Button>
+    </Box>
   );
 };
 
-export default LiabilityForm;
+export default LiabilitiesForm;

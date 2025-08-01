@@ -4,12 +4,14 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Login from './components/Login';
 import Register from './components/Register';
-import Dashboard from './components/Dashboard';
+
 import Items from './pages/Items';
 import Recurring from './pages/Recurring';
 import Analytics from './pages/Analytics';
 
 import ProtectedRoute from './components/ProtectedRoute';
+import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
 
 const MainRouter = () => (
   <>
@@ -46,6 +48,14 @@ const MainRouter = () => (
         element={
           <ProtectedRoute>
             <Analytics />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         }
       />

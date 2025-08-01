@@ -9,22 +9,48 @@ const IncomeForm = ({ onSubmit }) => {
     notes: '',
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {};
+
+    if (!formData.source.trim()) {
+      newErrors.source = 'Income source is required';
+      valid = false;
+    }
+
+    const amount = parseFloat(formData.amount);
+    if (isNaN(amount) || amount <= 0) {
+      newErrors.amount = 'Enter a valid amount greater than 0';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Convert amount to number
-    const amountNum = parseFloat(formData.amount);
-    if (!formData.source || isNaN(amountNum) || amountNum <= 0) {
-      alert('Please enter a valid source and positive amount');
-      return;
-    }
-    onSubmit && onSubmit({ ...formData, amount: amountNum });
-    // reset form
+    if (!validateForm()) return;
+
+    const incomeEntry = {
+      ...formData,
+      amount: parseFloat(formData.amount),
+      date: formData.date || new Date().toISOString().split('T')[0], // fallback to today
+    };
+
+    if (onSubmit) onSubmit(incomeEntry);
+
+    // Reset form
     setFormData({ source: '', amount: '', date: '', notes: '' });
+    setErrors({});
   };
 
   return (
@@ -44,7 +70,7 @@ const IncomeForm = ({ onSubmit }) => {
         gap: 2,
       }}
     >
-      <Typography variant="h6" sx={{ color: '#FFD700', mb: 2, textAlign: 'center' }}>
+      <Typography variant="h6" sx={{ color: '#FFD700', textAlign: 'center' }}>
         Add Income Entry
       </Typography>
 
@@ -55,23 +81,27 @@ const IncomeForm = ({ onSubmit }) => {
         onChange={handleChange}
         variant="filled"
         fullWidth
+        required
+        error={!!errors.source}
+        helperText={errors.source}
         InputProps={{ style: { backgroundColor: '#333', color: '#fff' } }}
         InputLabelProps={{ style: { color: '#FFD700' } }}
-        required
       />
 
       <TextField
-        label="Amount"
+        label="Amount ($)"
         name="amount"
         value={formData.amount}
         onChange={handleChange}
         type="number"
         variant="filled"
         fullWidth
+        required
+        error={!!errors.amount}
+        helperText={errors.amount}
+        inputProps={{ step: '0.01', min: '0' }}
         InputProps={{ style: { backgroundColor: '#333', color: '#fff' } }}
         InputLabelProps={{ style: { color: '#FFD700' } }}
-        inputProps={{ step: '0.01', min: '0' }}
-        required
       />
 
       <TextField
@@ -83,8 +113,7 @@ const IncomeForm = ({ onSubmit }) => {
         variant="filled"
         fullWidth
         InputProps={{ style: { backgroundColor: '#333', color: '#fff' } }}
-        InputLabelProps={{ style: { color: '#FFD700' } }}
-        // InputLabelProps={{ shrink: true }}
+        InputLabelProps={{ style: { color: '#FFD700' }, shrink: true }}
       />
 
       <TextField
@@ -103,7 +132,12 @@ const IncomeForm = ({ onSubmit }) => {
       <Button
         type="submit"
         variant="contained"
-        sx={{ backgroundColor: '#FFD700', color: '#1e1e2f', fontWeight: 'bold' }}
+        sx={{
+          backgroundColor: '#FFD700',
+          color: '#1e1e2f',
+          fontWeight: 'bold',
+          ':hover': { backgroundColor: '#ffeb3b' },
+        }}
       >
         Add Income
       </Button>
